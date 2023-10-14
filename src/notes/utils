@@ -1,0 +1,8 @@
+#!/bin/bash
+
+function check_config {
+  if [ -z ${QN_CONFIG_DEFINED} ]; then
+    echo "config wasn't loaded"
+    exit 0
+  fi
+}

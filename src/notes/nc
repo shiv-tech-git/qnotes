@@ -1,0 +1,5 @@
+#!/bin/bash
+
+file="${QN_NOTES_FOLDER}/$1.txt"
+mkdir -p $(dirname $file) && touch $file
+nano ${file}

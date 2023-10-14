@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# quick note create
+
+#set -x
+
+if [ -z "${QN_FOLDER}" ]; then
+  echo "error: QN_FOLDER is undefined"
+  exit 0
+fi
+
+. ${QN_FOLDER}/qn_config
+
+if [ $# -eq 0 ]; then
+  echo "error: note required"
+  exit 1
+fi
+
+if [ $1 == "-n" ]; then
+  ${QN_SRC_FOLDER}/notes/nc $2
+  exit $?
+fi
+
+echo "$*" >> ${QN_MICS}

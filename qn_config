@@ -1,0 +1,5 @@
+export QN_CONFIG_DEFINED="QN_CONFIG_DEFINED"
+export QN_MICS=${QN_FOLDER}/data/qn.txt
+export QN_NOTES_FOLDER=${QN_FOLDER}/data/notes
+export QN_SRC_FOLDER=${QN_FOLDER}/src
+export QN_TMP=${QN_FOLDER}/data/tmp.txt

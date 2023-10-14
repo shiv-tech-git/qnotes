@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# quick note read
+
+#set -x
+
+if [ -z "${QN_FOLDER}" ]; then
+  echo "error: QN_FOLDER is undefined"
+  exit 0
+fi
+
+. ${QN_FOLDER}/qn_config
+
+if [ $# -eq 0 ]; then
+  echo "error: note hint required"
+  exit 1
+fi
+
+regexp=$1
+for var in "$@"
+do
+  if [ ${var} = $1 ]; then 
+    continue 
+  fi
+
+    regexp+=".*"
+    regexp+=$var
+done
+
+#search in misc
+cat ${QN_MICS} | grep --color=always ${regexp}
+
+#search in notes
+nr ${regexp}
+
