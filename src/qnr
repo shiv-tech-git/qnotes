@@ -2,8 +2,6 @@
 
 # quick note read
 
-#set -x
-
 if [ -z "${QN_FOLDER}" ]; then
   echo "error: QN_FOLDER is undefined"
   exit 0
