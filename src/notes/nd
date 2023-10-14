@@ -10,7 +10,7 @@ if [ ! -d ${QN_NOTES_FOLDER} ]; then
 fi
 
 slashes=${QN_NOTES_FOLDER//[!\/]}
-depth=${#slashes}
+depth=$(( ${#slashes} + 2 ))
 
 files=$(find ${QN_NOTES_FOLDER} | grep ".txt" | cut -d'/' -f${depth}- | grep --color=always $1)
 if [ -z "${files}" ]; then
@@ -26,10 +26,6 @@ while [ ${line_count} -ne 1 ]; do
     echo "${files}"
   fi
   read -p "Specify note: " substr
-
-  #var=${QN_NOTES_FOLDER//[!\/]}
-  #echo ${#var}
-  #echo path | cut -d'/' -f2-
   
   files=$(find ${QN_NOTES_FOLDER} | grep ".txt" | cut -d'/' -f${depth}- | grep --color=always ${substr})
 
@@ -44,8 +40,10 @@ done
 echo "${files}"
 
 read -p "delete [yes/no]: " ans
-if [ ${ans} = "yes" ]; then
+if [ "${ans}" = "yes" ]; then
   target=$(find ${QN_NOTES_FOLDER} | grep ".txt" | grep ${substr})
   rm "${target}"
   find ${QN_NOTES_FOLDER}/ -type d -empty -delete
+else
+  echo "cancel"
 fi

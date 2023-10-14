@@ -21,4 +21,8 @@ if [ $1 == "-n" ]; then
   exit $?
 fi
 
+if [ ! -f "${QN_MICS}" ]; then
+  mkdir -p $(dirname ${QN_MICS}) && touch ${QN_MICS}
+fi
+
 echo "$*" >> ${QN_MICS}

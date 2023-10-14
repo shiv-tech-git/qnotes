@@ -31,5 +31,5 @@ done
 cat ${QN_MICS} | grep --color=always ${regexp}
 
 #search in notes
-nr ${regexp}
+${QN_SRC_FOLDER}/notes/nr ${regexp}
 

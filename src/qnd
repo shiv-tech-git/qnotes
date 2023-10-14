@@ -2,8 +2,6 @@
 
 # quick note delete
 
-#set -x
-
 if [ -z "${QN_FOLDER}" ]; then
   echo "error: QN_FOLDER is undefined"
   exit 0
@@ -38,15 +36,16 @@ while [ 0 ]; do
     read -p "delete [yes/no/spec]: " ans
   fi
 
-  if [ ${ans} = "yes" ]; then
+  if [ "${ans}" = "yes" ]; then
     grep -v "${substr}" ${QN_MICS} > ${QN_TMP} && mv ${QN_TMP} ${QN_MICS}
     exit 0
   fi
   
-  if [ ${ans} = "spec" ]; then
+  if [ "${ans}" = "spec" ]; then
     read -p "Specify note: " substr
     _lines="$(grep --color=always "${substr}" ${QN_MICS})"
-  else # ans = no
+  else
+    echo "cancel"
     break
   fi
 done

@@ -5,9 +5,9 @@ if [ ! -d ${QN_NOTES_FOLDER} ]; then
 fi
 
 #search in notes
-# TODO: don't know how to remove path prefix
-#       to awoid serch in it
-files=$(find ${QN_NOTES_FOLDER} | grep ".txt" | sed 's/.*\(_notes\)//g' | grep --color=always $1)
+slashes=${QN_NOTES_FOLDER//[!\/]}
+depth=$(( ${#slashes} + 2 ))
+files=$(find ${QN_NOTES_FOLDER} | grep ".txt" | cut -d'/' -f${depth}- | grep --color=always $1)
 
 if [ -z "${files}" ]; then
   exit 0
