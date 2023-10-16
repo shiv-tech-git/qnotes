@@ -11,12 +11,19 @@ check_all
 regexp=$(regexp_hint "$*")
 
 #search in unnamed notes
-cat ${QN_UNNAMED} | grep --color=always ${regexp}
+if [ -f ${QN_UNNAMED} ]; then
+  cat ${QN_UNNAMED} | grep --color=always ${regexp}
+fi
+
 
 #search in named notes
+if [ ! -d ${QN_NAMED_DIR} ]; then
+  exit 0
+fi
+
 files=$(find_named_notes $regexp --color=always)
 
-if [ -n "${files}" ]; then
+if [ -z "${files}" ]; then
   exit 0
 fi
 

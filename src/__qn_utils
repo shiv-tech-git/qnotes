@@ -83,7 +83,6 @@ function find_target {
   local notes_count=$(echo "$notes" | wc -l)
 
   if [ $notes_count -eq 0 ]; then
-    echo "no match"
     exit 0
   fi
 
@@ -102,7 +101,8 @@ function find_target {
     local notes_count=$(echo "$notes" | wc -l)
   done
 
-  echo "$notes"
+  
+  echo -e "\n$notes"
 
   __target=$(remove_color "$notes")
 }
