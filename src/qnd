@@ -2,50 +2,25 @@
 
 # quick note delete
 
-if [ -z "${QN_FOLDER}" ]; then
-  echo "error: QN_FOLDER is undefined"
+. __qn_utils
+
+check_data_dir
+check_hint "$*"
+
+__target=""
+find_target "$*"
+
+read -p "delete [yes/no]: " ans
+
+if [ "${ans}" != "yes" ]; then
   exit 0
 fi
 
-. ${QN_FOLDER}/qn_config
-
-if [ $# -eq 0 ]; then
-  echo "error: note hint required"
-  exit 1
+unnamed=$(grep "$__target" $QN_UNNAMED)
+if [ -n "$unnamed" ]; then
+  grep -v ^"$__target"$ ${QN_UNNAMED} > ${QN_TMP}
+  mv ${QN_TMP} ${QN_UNNAMED}
+else
+  rm ${QN_NAMED_DIR}/"${__target}"
+  find ${QN_NAMED_DIR}/ -type d -empty -delete
 fi
-
-if [ $1 = "-n" ]; then
-  shift
-  ${QN_SRC_FOLDER}/notes/nd $@
-  exit $?
-fi
-
-_lines=$(grep --color=always "$*" ${QN_MICS})
-
-if [ -z "${_lines}" ]; then
-  echo "no match"
-  exit 0
-fi
-
-substr="$*"
-while [ 0 ]; do
-  if [ -z "${_lines}" ]; then
-    ans="spec"
-  else
-    echo "${_lines}"
-    read -p "delete [yes/no/spec]: " ans
-  fi
-
-  if [ "${ans}" = "yes" ]; then
-    grep -v "${substr}" ${QN_MICS} > ${QN_TMP} && mv ${QN_TMP} ${QN_MICS}
-    exit 0
-  fi
-  
-  if [ "${ans}" = "spec" ]; then
-    read -p "Specify note: " substr
-    _lines="$(grep --color=always "${substr}" ${QN_MICS})"
-  else
-    echo "cancel"
-    break
-  fi
-done

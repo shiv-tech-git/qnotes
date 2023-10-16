@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# quick note create
+
+#set -x
+
+. __qn_utils
+
+check_data_dir
+
+if [ -z "$1" ]; then
+  echo "error: option is required"
+  exit 1
+fi
+
+if [ "$1" = "tree"] || [ "$1" = "-t"]; then
+  check_named
+  cd ${QN_NAMED_DIR}
+  tree .
+  exit 0
+fi
+
+if [ "$1" = "named" ] || [ "$1" = "-n"]; then
+  check_named
+  all_named_notes
+fi
+
+if [ "$1" = "unnamed" ] || [ "$1" = "-u"]; then
+  check_unnamed
+  cat ${QN_UNNAMED}
+fi

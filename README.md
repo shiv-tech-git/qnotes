@@ -1,30 +1,60 @@
 ## QNOTES
-
+### Optional
 Use __zsh__ for hightlighting.  
-Install __tree__ for __qnt__ (quick note tree).  
+Install __tree__ for quick note tree (__qn tree__).  
 Ubuntu:
 ``` bash
 sudo apt install tree
 ```
-Init
+___
+
+### Init
 ```
 . ./qn_init.sh
 ```
 
-In QNotes there is 2 concepts:
- * quick notes
- * notes
+___
 
-__Quich notes__ is just a single line. Short thought, command line, path, module name, etc.  
-__Note__ is just a small regular note. Something a little more complicated like snippet of code or config file.  
+In __QNotes__ there is 2 concepts:
+ * named notes
+ * unnamed notes
 
-QNotes works in __CRUD__ terminology.
+__Unnamed note__ is just a single line. Short thought, command line, path, module name, etc.  
+__Named note__ in its turn is a small regular memo. Something a little more complicated. Like snippet of code or config.  
 
-## Quick notes 
+__QNotes__ works in __CRUD__ terminology.  
+__C__ - create  
+__R__ - read
+__U__ - update  
+__D__ - delete
+
+__Qnotes__ will handle your hint like this:  
+*this is my hint* -> *"this.\*is.\*my.\*hint"*
+And pass it to grep.  
+If you have collision like this:
+```
+start note
+      note
+      note end
+```
+You can specify note like this:  
+^note   ->  __note__ and __note end__  
+note$   ->  __note__ and __note end__  
+^note$  ->  __note__  
+
+
 ### __Quick note create__
+Unnamed note
 ```
 qnc create symbol link: ln -s /path/to/file /path/to/link
 ```
+Named note
+``` bash
+qnc -n other/home/note_example
+```
+Where __other/home/note_example__ if the note name.
+The editor will be opened.
+
 ### __Quick note read__  
 ``` bash
 qnr link 
@@ -33,6 +63,9 @@ output:
 ``` bash
 create symbol link: ln -s /path/to/file /path/to/link
 link note for collision
+other/bash/link_note
+        Multi line
+        link note
 ```
 
 ### __quick note update__
@@ -45,9 +78,10 @@ output:
 ```
 create symbol link: ln -s /path/to/file /path/to/link
 link note for collision
+other/bash/link_note
 Specify note:
 ```
-If there are some notes with the same hint, enter more specific hint. When only one note left, nano editor will be opened by default. Do edit without new lines. Close editor and save changes.  
+If multiple notes displayed for the same hint, enter more specific hint. When only one note left, editor will be opened. Do edit and save changes.  
 
 ### __quick note delete__
 
@@ -59,73 +93,22 @@ output:
 ```
 create symbol link: ln -s /path/to/file /path/to/link
 link note for collision
-delete [yes/no/spec]:  
+other/bash/link_note
+Specify note:  
 ``` 
-
-__yes__ - delete all notes  
-__no__ (or any symbols) - cancel  
-__spec__ - do more specific hint   
-
-``` bash
+If there is note collision, perform hint until one note left. You can't delete multiple.
+```
 link note for collision
-delete [yes/no/spec]: spec
-Specify note: 
-```
-
-## Notes
-### __note create__
-Qnotes will handle your arguments like this:  
-*this is my hint* -> *"this.\*is.\*my.\*hint"*
-And pass it to grep.
-
-``` bash
-qnc -n other/home/note_example
-```
-Where __other/home/note_example__ if the note name.
-The editor will be opened. Make a note.
-
-### __note read__
-``` bash
-qnr -n example
-```
-output:
-``` bash
-example quick note for collision
-other/home/note_example.txt
-        I need to come up fith something better
-other/home/note_example_collision.txt
-        Every body loves 42 number.
-```
-You don't need to pass __-n__ flag when do __read__. Qnotes searches in qnotes and notes.  
-
-### __note update__
-``` bash
-qnu -n example
-```
-output:
-``` bash
-other/home/note_example.txt
-other/home/note_example_collision.txt
-Specify note: 
-```
-Same thing as qnotes. Perform hints until one note left.
-
-### __note delete__  
-``` bash
-qnd -n example
-```
-output:
-``` bash
-other/home/note_example.txt
-other/home/note_example_collision.txt
-Specify note:
-```
-The same as qnote. Perform hints until one note left. You can't delete multiple notes like qnote.
+delete [yes/no]:  
+``` 
 
 ___
 ### __note tree__  
 ``` bash
-qnt
+qn tree
+```
+```
+qn -t
 ```
 output:
 ```

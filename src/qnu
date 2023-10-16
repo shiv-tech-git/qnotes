@@ -2,53 +2,21 @@
 
 # quick note update
 
-#set -x
+. __qn_utils
 
-if [ -z "${QN_FOLDER}" ]; then
-  echo "error: QN_FOLDER is undefined"
-  exit 0
+check_data_dir
+check_hint "$*"
+
+__target=""
+find_target "$*"
+unnamed=$(grep "$__target" $QN_UNNAMED)
+
+if [ -n "$unnamed" ]; then
+  echo "$__target" > $QN_TMP
+  nano $QN_TMP
+  new_line=$(head -n 1 < $QN_TMP)
+  cat $QN_UNNAMED | sed -e "s/$__target/$new_line/" > $QN_TMP && mv $QN_TMP $QN_UNNAMED
+else
+  nano $QN_NAMED_DIR/"$__target"
 fi
-
-. ${QN_FOLDER}/qn_config
-
-if [ $# -eq 0 ]; then
-  echo "error: note hint required"
-  exit 1
-fi
-
-if [ $1 = "-n" ]; then
-  shift
-  ${QN_SRC_FOLDER}/notes/nu $@
-  exit $?
-fi
-
-_lines=$(grep --color=always "$*" ${QN_MICS})
-line_count=$(echo "${_lines}" | wc -l)
-
-if [ -z "${_lines}" ]; then
-  echo "no match"
-  exit 0
-fi
-
-substr="$*"
-while [ ${line_count} -ne 1 ]; do
-  echo ""
-
-  echo "${_lines}"
-  read -p "Specify note: " substr
-  _lines="$(grep --color=always "${substr}" ${QN_MICS})"
-  
-  if [ -z "${_lines}" ]; then
-    line_count=0
-    continue
-  fi
-
-  line_count=$(echo "${_lines}" | wc -l)
-done
-
-_lines="$(grep "${substr}" ${QN_MICS})"
-echo "${_lines}" > ${QN_TMP}
-nano ${QN_TMP}
-new_line=$(cat ${QN_TMP})
-cat ${QN_MICS} | sed -e "s/${_lines}/${new_line}/" > ${QN_TMP} && mv ${QN_TMP} ${QN_MICS}
 

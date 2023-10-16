@@ -1,0 +1,108 @@
+
+QN_UNNAMED=${QN_DATA_DIR}/unnamed.txt
+QN_NAMED_DIR=${QN_DATA_DIR}/named
+QN_TMP=${QN_DATA_DIR}/tmp.txt
+
+#set -x
+
+function check_data_dir {
+  if [ -z "${QN_DATA_DIR}" ]; then
+    echo "error: QN_DATA_DIR is undefined"
+    exit 1
+  fi
+}
+
+function check_hint {
+  if [ -z "$1" ]; then
+    echo "error: hint is required"
+    exit 1
+  fi
+}
+
+function check_named {
+  if [ ! -d ${QN_NAMED_DIR} ]; then
+    echo "empty"
+    exit 0
+  fi
+}
+
+function check_unnamed {
+  if [ ! -f ${QN_UNNAMED} ]; then
+    echo "empty"
+    exit 0
+  fi
+}
+
+function check_all {
+  if [ ! -d ${QN_NAMED_DIR} ] && [ ! -f ${QN_UNNAMED} ]; then
+    echo "empty"
+    exit 0
+  fi
+}
+
+function regexp_hint {
+  echo "$1" | sed 's/\s\+/.*/g' 
+}
+
+function all_named_notes {
+  local escaped=$(echo $QN_NAMED_DIR | sed 's/\//\\\//g')
+  find $QN_NAMED_DIR -type f | sed "s/^$escaped//"
+}
+
+function find_named_notes {
+  all_named_notes | grep $2 $1
+}
+
+function find_notes {
+  local regexp=$(regexp_hint "$1")
+
+  #find unnamed notes
+  if [ -f $QN_UNNAMED ]; then
+    local notes=$(cat $QN_UNNAMED | grep $2 "$regexp")
+  fi
+
+  #find named notes
+  if [ -d $QN_NAMED_DIR ]; then
+    local files=$(find_named_notes $2 $regexp)
+    if [ -n "$notes" ]; then
+      notes+='\n'
+    fi
+    local notes+="$files"
+  fi
+
+  echo -e "$notes"
+}
+
+function remove_color {
+  sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2};?)?)?[mGK]//g" <<< $1
+}
+
+# result: __target
+function find_target {
+  local notes=$(find_notes "$1" "--color=always")
+  local notes_count=$(echo "$notes" | wc -l)
+
+  if [ $notes_count -eq 0 ]; then
+    echo "no match"
+    exit 0
+  fi
+
+  while [ $notes_count -ne 1 ]; do
+    echo ""
+
+    echo "$notes"
+    read -p "Specify note: " substr
+    local notes=$(find_notes "$substr" "--color=always")
+    
+    if [ -z "$notes" ]; then
+      local notes_count=0
+      continue
+    fi
+
+    local notes_count=$(echo "$notes" | wc -l)
+  done
+
+  echo "$notes"
+
+  __target=$(remove_color "$notes")
+}

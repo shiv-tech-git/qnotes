@@ -4,25 +4,27 @@
 
 #set -x
 
-if [ -z "${QN_FOLDER}" ]; then
-  echo "error: QN_FOLDER is undefined"
+. __qn_utils
+
+check_data_dir
+check_hint "$*"
+
+# named
+if [ $1 == "-n" ]; then
+  shift
+
+  file="${QN_NAMED_DIR}/$(echo "$*" | sed 's/\s\+/_/g')"
+  mkdir -p $(dirname $file) && touch $file
+  nano ${file}
   exit 0
 fi
 
-. ${QN_FOLDER}/qn_config
-
-if [ $# -eq 0 ]; then
-  echo "error: note required"
-  exit 1
+# unnamed
+if [ ! -f "${QN_UNNAMED}" ]; then
+  mkdir -p $(dirname ${QN_UNNAMED}) && touch ${QN_UNNAMED}
 fi
 
-if [ $1 == "-n" ]; then
-  ${QN_SRC_FOLDER}/notes/nc $2
-  exit $?
+# if not duplicate
+if [ -z "$(cat "${QN_UNNAMED}" | grep ^"$*"$ )" ]; then
+  echo "$*" >> ${QN_UNNAMED}
 fi
-
-if [ ! -f "${QN_MICS}" ]; then
-  mkdir -p $(dirname ${QN_MICS}) && touch ${QN_MICS}
-fi
-
-echo "$*" >> ${QN_MICS}

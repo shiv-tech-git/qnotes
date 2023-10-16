@@ -2,32 +2,27 @@
 
 # quick note read
 
-if [ -z "${QN_FOLDER}" ]; then
-  echo "error: QN_FOLDER is undefined"
+. __qn_utils
+
+check_data_dir
+check_hint "$*"
+check_all
+
+regexp=$(regexp_hint "$*")
+
+#search in unnamed notes
+cat ${QN_UNNAMED} | grep --color=always ${regexp}
+
+#search in named notes
+files=$(find_named_notes $regexp --color=always)
+
+if [ -n "${files}" ]; then
   exit 0
 fi
 
-. ${QN_FOLDER}/qn_config
-
-if [ $# -eq 0 ]; then
-  echo "error: note hint required"
-  exit 1
-fi
-
-regexp=$1
-for var in "$@"
-do
-  if [ ${var} = $1 ]; then 
-    continue 
-  fi
-
-    regexp+=".*"
-    regexp+=$var
-done
-
-#search in misc
-cat ${QN_MICS} | grep --color=always ${regexp}
-
-#search in notes
-${QN_SRC_FOLDER}/notes/nr ${regexp}
+while read -r file; do
+  echo "$file"
+  file_no_color=$(remove_color ${file})
+  cat "${QN_NAMED_DIR}/$file_no_color" | sed 's/\(.*\)/\t\1/'
+done <<< "$files"
 
