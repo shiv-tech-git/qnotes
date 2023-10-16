@@ -24,9 +24,9 @@ __Named note__ in its turn is a small regular memo. Something a little more comp
 
 __QNotes__ works in __CRUD__ terminology.  
 __C__ - create  
-__R__ - read
+__R__ - read  
 __U__ - update  
-__D__ - delete
+__D__ - delete  
 
 __Qnotes__ will handle your hint like this:  
 *this is my hint* -> *"this.\*is.\*my.\*hint"*
