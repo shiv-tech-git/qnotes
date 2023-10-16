@@ -103,7 +103,8 @@ delete [yes/no]:
 ``` 
 
 ___
-### __note tree__  
+### __qn__  
+Named notes tree
 ``` bash
 qn tree
 ```
@@ -120,6 +121,22 @@ output:
     └── shop.txt
 
 2 directories, 3 files
+```
+
+List all named notes
+```
+qn named
+```
+```
+qn -n
+```
+
+List all unnamed notes
+```
+qn unnamed
+```
+```
+qn -u
 ```
 
 
