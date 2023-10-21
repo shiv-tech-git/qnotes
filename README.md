@@ -9,10 +9,20 @@ sudo apt install tree
 ___
 
 ### Init
+`QN_DATA_DIR` env var must be defined and exported  
+`qnote/src` directory must be added to `PATH`  
+or just do:
 ```
 . ./qn_init.sh
 ```
 
+### Install
+You can manually init QNotes each time, or just install it permanently.
+If you have zsh - qnotes will be installed for it.
+Otherwise qnotes will be installed for bash.
+```
+. ./qn_install.sh
+```
 ___
 
 In __QNotes__ there is 2 concepts:
@@ -20,7 +30,7 @@ In __QNotes__ there is 2 concepts:
  * unnamed notes
 
 __Unnamed note__ is just a single line. Short thought, command line, path, module name, etc.  
-__Named note__ in its turn is a small regular memo. Something a little more complicated. Like snippet of code or config.  
+__Named note__ is omething a little more complicated, with title and body. Like snippet of code or config. 
 
 __QNotes__ works in __CRUD__ terminology.  
 __C__ - create  
@@ -28,7 +38,7 @@ __R__ - read
 __U__ - update  
 __D__ - delete  
 
-__Qnotes__ will handle your hint like this:  
+__QNotes__ will handle your hint like this:  
 *this is my hint* -> *"this.\*is.\*my.\*hint"*
 And pass it to grep.  
 If you have collision like this:
@@ -39,7 +49,7 @@ start note
 ```
 You can specify note like this:  
 ^note   ->  __note__ and __note end__  
-note$   ->  __note__ and __note end__  
+note$   ->  __note__ and __start note__  
 ^note$  ->  __note__  
 
 
