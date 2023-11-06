@@ -80,11 +80,12 @@ function remove_color {
 # result: __target
 function find_target {
   local notes=$(find_notes "$1" "--color=always")
-  local notes_count=$(echo "$notes" | wc -l)
 
-  if [ $notes_count -eq 0 ]; then
+  if [ -z "$notes" ]; then
     exit 0
   fi
+
+  local notes_count=$(echo "$notes" | wc -l)
 
   while [ $notes_count -ne 1 ]; do
     echo ""
