@@ -149,7 +149,7 @@ qn unnamed
 qn -u
 ```
 
-Update
+Update sources
 ```
 qn update
 ```
