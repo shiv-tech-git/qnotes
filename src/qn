@@ -32,4 +32,10 @@ if [ "$1" = "unnamed" ] || [ "$1" = "-u" ]; then
   exit 0;
 fi
 
+if [ "$1" = "update" ]; then
+  cd ${QN_DATA_SRC}
+  git pull
+  exit 0;
+fi
+
 echo "error: invalid option"

@@ -1,4 +1,5 @@
 #!/bin/bash
 
 export QN_DATA_DIR=$(pwd)/data
-PATH=$PATH:$(pwd)/src
+export QN_DATA_SRC=$(pwd)/src
+PATH=$PATH:${QN_DATA_SRC}

@@ -149,4 +149,8 @@ qn unnamed
 qn -u
 ```
 
+Update
+```
+qn update
+```
 
