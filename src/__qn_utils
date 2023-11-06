@@ -91,7 +91,8 @@ function find_target {
     echo ""
 
     echo "$notes"
-    read -p "Specify note: " substr
+    read -e -p "Specify note: " substr
+    history -s "$substr"
     local notes=$(find_notes "$substr" "--color=always")
     
     if [ -z "$notes" ]; then

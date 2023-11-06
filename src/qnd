@@ -10,7 +10,7 @@ check_hint "$*"
 __target=""
 find_target "$*"
 
-read -p "delete [yes/no]: " ans
+read -e -p "delete [yes/no]: " ans
 
 if [ "${ans}" != "yes" ]; then
   exit 0
