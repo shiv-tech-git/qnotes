@@ -16,7 +16,7 @@ if [ "${ans}" != "yes" ]; then
   exit 0
 fi
 
-unnamed=$(grep "$__target" $QN_UNNAMED)
+unnamed=$(test -f $QN_UNNAMED && grep "$__target" $QN_UNNAMED)
 if [ -n "$unnamed" ]; then
   grep -v ^"$__target"$ ${QN_UNNAMED} > ${QN_TMP}
   mv ${QN_TMP} ${QN_UNNAMED}
