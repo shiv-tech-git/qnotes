@@ -20,6 +20,10 @@ unnamed=$(test -f $QN_UNNAMED && grep "$__target" $QN_UNNAMED)
 if [ -n "$unnamed" ]; then
   grep -v ^"$__target"$ ${QN_UNNAMED} > ${QN_TMP}
   mv ${QN_TMP} ${QN_UNNAMED}
+
+  if [ ! -s ${QN_UNNAMED} ]; then
+    rm ${QN_UNNAMED}
+  fi
 else
   rm ${QN_NAMED_DIR}/"${__target}"
   find ${QN_NAMED_DIR}/ -type d -empty -delete
