@@ -1,7 +1,7 @@
-## QNOTES
+## QNotes
 ### Optional
-Use __zsh__ for hightlighting.  
-Install __tree__ for quick note tree (__qn tree__).  
+Use __oh my zsh__ for hightlighting.  
+Install __tree__ for quick note tree (__qn --tree__).  
 Ubuntu:
 ``` bash
 sudo apt install tree
@@ -18,19 +18,17 @@ or just do:
 
 ### Install
 You can manually init QNotes each time, or just install it permanently.
-If you have zsh - qnotes will be installed for it.
-Otherwise qnotes will be installed for bash.
+If you have zsh - QNotes will be installed for it.
+Otherwise QNotes will be installed for bash.
 ```
 . ./qn_install.sh
 ```
+### __Update__  
+```
+qn update
+```
 ___
 
-In __QNotes__ there is 2 concepts:
- * named notes
- * unnamed notes
-
-__Unnamed note__ is just a single line. Short thought, command line, path, module name, etc.  
-__Named note__ is omething a little more complicated, with title and body. Like snippet of code or config. 
 
 __QNotes__ works in __CRUD__ terminology.  
 __C__ - create  
@@ -38,8 +36,8 @@ __R__ - read
 __U__ - update  
 __D__ - delete  
 
-__QNotes__ will handle your hint like this:  
-*this is my hint* -> *"this.\*is.\*my.\*hint"*
+<title_hint> will be handled this way:  
+*this is my title hint* -> *"this.\*is.\*my.\*title.\*hint"*
 And pass it to grep.  
 If you have collision like this:
 ```
@@ -47,110 +45,56 @@ start note
       note
       note end
 ```
-You can specify note like this:  
+You can specify note title like this:  
 ^note   ->  __note__ and __note end__  
-note$   ->  __note__ and __start note__  
+note$   ->  __start note__  and __note__  
 ^note$  ->  __note__  
 
 
-### __Quick note create__
-Unnamed note
+### __Create__
 ```
-qnc create symbol link: ln -s /path/to/file /path/to/link
-```
-Named note
-``` bash
-qnc -n other/home/note_example
-```
-Where __other/home/note_example__ if the note name.
-The editor will be opened.
-
-### __Quick note read__  
-``` bash
-qnr link 
-```
-output:
-``` bash
-create symbol link: ln -s /path/to/file /path/to/link
-link note for collision
-other/bash/link_note
-        Multi line
-        link note
+qn --create <note_title>
+qn -c <note_title>
+qnc <note_title>
 ```
 
-### __quick note update__
-
-``` bash
-qnu link 
+### __Read__  
+```
+qn --read <title_hint>
+qn -r <title_hint>
+qnr <title_hint>
 ```
 
-output:
-```
-create symbol link: ln -s /path/to/file /path/to/link
-link note for collision
-other/bash/link_note
-Specify note:
-```
-If multiple notes displayed for the same hint, enter more specific hint. When only one note left, editor will be opened. Do edit and save changes.  
+### __Update__
 
-### __quick note delete__
-
-``` bash
-qnd link 
+```
+qn --update <title_hint>
+qn -u <title_hint>
+qnu <title_hint>
 ```
 
-output:
+### __Delete__
 ```
-create symbol link: ln -s /path/to/file /path/to/link
-link note for collision
-other/bash/link_note
-Specify note:  
-``` 
-If there is note collision, perform hint until one note left. You can't delete multiple.
+qn --delete <title_hint>
+qn -d <title_hint>
+qnd <title_hint>
 ```
-link note for collision
-delete [yes/no]:  
-``` 
 
-___
-### __qn__  
-Named notes tree
-``` bash
-qn tree
+### __Tree structure of notes__  
 ```
-```
+qn --tree
 qn -t
 ```
-output:
-```
-.
-└── other
-    ├── home
-    │   ├── note_example_collision.txt
-    │   └── note_example.txt
-    └── shop.txt
 
-2 directories, 3 files
+### __List of notes__  
+```
+qn --all
+qn -a
 ```
 
-List all named notes
+### __Help__  
 ```
-qn named
-```
-```
-qn -n
-```
-
-List all unnamed notes
-```
-qn unnamed
-```
-```
-qn -u
-```
-
-Update sources
-```
-qn update
+qn --help
+qn -h
 ```
 
