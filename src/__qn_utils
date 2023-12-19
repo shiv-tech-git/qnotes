@@ -3,8 +3,6 @@ QN_UNNAMED=${QN_DATA_DIR}/unnamed.txt
 QN_NAMED_DIR=${QN_DATA_DIR}/named
 QN_TMP=${QN_DATA_DIR}/tmp.txt
 
-#set -x
-
 function check_data_dir {
   if [ -z "${QN_DATA_DIR}" ]; then
     echo "error: QN_DATA_DIR is undefined"
@@ -19,15 +17,31 @@ function check_hint {
   fi
 }
 
+function named_exists {
+  if [ -d ${QN_NAMED_DIR} ]; then
+    return 0
+  fi
+  return 1
+}
+
 function check_named {
-  if [ ! -d ${QN_NAMED_DIR} ]; then
+  named_exists
+  if [ "$?" -ne 0 ] ; then
     echo "empty"
     exit 0
   fi
 }
 
+function unnamed_exists {
+  if [ -f ${QN_UNNAMED} ]; then
+    return 0
+  fi
+  return 1
+}
+
 function check_unnamed {
-  if [ ! -f ${QN_UNNAMED} ]; then
+  unnamed_exists
+  if [ "$?" -ne 0 ] ; then
     echo "empty"
     exit 0
   fi

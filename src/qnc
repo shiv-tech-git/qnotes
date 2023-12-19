@@ -9,22 +9,25 @@
 check_data_dir
 check_hint "$*"
 
-# named
-if [ $1 == "-n" ]; then
+# unnamed
+if [ $1 == "-u" ]; then
   shift
 
-  file="${QN_NAMED_DIR}/$(echo "$*" | sed 's/\s\+/_/g')"
-  mkdir -p $(dirname $file) && touch $file
-  nano ${file}
+  if [ ! -f "${QN_UNNAMED}" ]; then
+    mkdir -p $(dirname ${QN_UNNAMED}) && touch ${QN_UNNAMED}
+  fi
+
+  # if not duplicate
+  if [ -z "$(cat "${QN_UNNAMED}" | grep ^"$*"$ )" ]; then
+    echo "$*" >> ${QN_UNNAMED}
+  fi
+
   exit 0
 fi
 
-# unnamed
-if [ ! -f "${QN_UNNAMED}" ]; then
-  mkdir -p $(dirname ${QN_UNNAMED}) && touch ${QN_UNNAMED}
-fi
+# named
+file="${QN_NAMED_DIR}/$(echo "$*" | sed 's/\s\+/_/g')"
+mkdir -p $(dirname $file) && touch $file
+nano ${file}
+exit 0
 
-# if not duplicate
-if [ -z "$(cat "${QN_UNNAMED}" | grep ^"$*"$ )" ]; then
-  echo "$*" >> ${QN_UNNAMED}
-fi
