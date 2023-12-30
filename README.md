@@ -1,27 +1,8 @@
 ## QNotes
-### Optional
-Use __oh my zsh__ for hightlighting.  
-Install __tree__ for quick note tree (__qn --tree__).  
-Ubuntu:
-``` bash
-sudo apt install tree
-```
-___
-
-### Init
-`QN_DATA_DIR` env var must be defined and exported  
-`qnote/src` directory must be added to `PATH`  
-or just do:
-```
-. ./qn_init.sh
-```
 
 ### Install
-You can manually init QNotes each time, or just install it permanently.
-If you have zsh - QNotes will be installed for it.
-Otherwise QNotes will be installed for bash.
 ```
-. ./qn_install.sh
+qn install
 ```
 ### __Update__  
 ```
@@ -87,6 +68,7 @@ qn -t
 ```
 
 ### __List of notes__  
+__tree__ must be installed
 ```
 qn --all
 qn -a
