@@ -1,0 +1,243 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  echo -e "error: option is required. 
+try: qn --help"
+  exit 1
+fi
+
+function check_data_dir {
+  if [ -z "${QN_DATA_DIR}" ]; then
+    echo "error: QN_DATA_DIR is undefined"
+    exit 1
+  fi
+
+  if [ ! -d "${QN_DATA_DIR}" ]; then
+    mkdir -p "${QN_DATA_DIR}"
+  fi
+}
+
+function check_hint {
+  if [ -z "$1" ]; then
+    echo "error: hint is required"
+    exit 1
+  fi
+}
+
+function data_dir_exists {
+  if [ -d ${QN_DATA_DIR} ]; then
+    return 0
+  fi
+  return 1
+}
+
+function regexp_hint {
+  echo "$1" | sed 's/\s\+/.*/g' 
+}
+
+function all_notes {
+  local escaped=$(echo $QN_DATA_DIR | sed 's/\//\\\//g')
+  find $QN_DATA_DIR -type f | sed "s/^$escaped//"
+}
+
+function find_notes {
+  local regexp=$(regexp_hint "$1")
+  local files=$(all_notes | grep $regexp $2)
+  echo -e "$files"
+}
+
+function remove_color {
+  sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2};?)?)?[mGK]//g" <<< $1
+}
+
+# result: __target
+function find_target {
+  local notes=$(find_notes "$1" "--color=always")
+
+  if [ -z "$notes" ]; then
+    exit 0
+  fi
+
+  local notes_count=$(echo "$notes" | wc -l)
+
+  while [ $notes_count -ne 1 ]; do
+    echo ""
+
+    echo "$notes"
+    read -e -p "Specify note: " substr
+    history -s "$substr"
+    local notes=$(find_notes "$substr" "--color=always")
+    
+    if [ -z "$notes" ]; then
+      local notes_count=0
+      continue
+    fi
+
+    local notes_count=$(echo "$notes" | wc -l)
+  done
+  
+  echo -e "\n$notes"
+
+  __target=$(remove_color "$notes")
+}
+
+if [ "$1" = "--create" ] || [ "$1" = "-c" ]; then
+  check_data_dir 
+  shift
+
+  check_hint "$*"
+
+  file="${QN_DATA_DIR}/$(echo "$*" | sed 's/\s\+/_/g')"
+  mkdir -p $(dirname $file) && touch $file
+  nano ${file}
+  exit 0
+
+  exit 0
+fi
+
+if [ "$1" = "--read" ] || [ "$1" = "-r" ]; then
+  check_data_dir 
+  shift
+
+  check_hint "$*"
+
+  regexp=$(regexp_hint "$*")
+
+  files=$(find_notes $regexp --color=always)
+
+  if [ -z "${files}" ]; then
+    exit 0
+  fi
+
+  while read -r file; do
+    echo "$file"
+    file_no_color=$(remove_color ${file})
+    cat "${QN_DATA_DIR}/$file_no_color" | sed 's/\(.*\)/\t\1/'
+  done <<< "$files"
+
+  exit 0
+fi
+
+if [ "$1" = "--delete" ] || [ "$1" = "-d" ]; then
+  check_data_dir 
+  shift
+
+  check_hint "$*"
+
+  __target=""
+  find_target "$*"
+
+  read -e -p "delete [yes/no]: " ans
+
+  if [ "${ans}" != "yes" ]; then
+    exit 0
+  fi
+
+  rm ${QN_DATA_DIR}/"${__target}"
+  find ${QN_DATA_DIR}/ -type d -empty -delete
+
+  exit 0
+fi
+
+if [ "$1" = "--update" ] || [ "$1" = "-u" ]; then
+  check_data_dir 
+  shift
+  
+  check_hint "$*"
+
+  __target=""
+  find_target "$*"
+  nano $QN_DATA_DIR/"$__target"
+
+  exit 0
+fi
+
+if [ "$1" = "--tree" ] || [ "$1" = "-t" ]; then
+  data_dir_exists
+  if [ "$?" -eq 0 ] ; then
+    cd ${QN_DATA_DIR}
+    tree . | head -n -2
+  fi
+
+  exit 0
+fi
+
+if [ "$1" = "--all" ] || [ "$1" = "-a" ]; then
+  check_data_dir 
+  data_dir_exists
+  if [ "$?" -eq 0 ] ; then
+    all_notes
+  fi
+  exit 0;
+  // TODO: echo empty if empty
+fi
+
+if [ "$1" = "update" ]; then
+  cd ${QN_DATA_SRC}
+  git pull
+  exit 0;
+fi
+
+function create_shortcut {
+  local file="$SCRIPT_DIR/$1"
+  if [ -f $file ]; then
+    echo "$1 already exists"
+  else
+    echo "creating $1"
+    echo -e $2 > $file
+    chmod u+x $file
+  fi
+}
+
+if [ "$1" = "install" ]; then
+  SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  SHELL_BIN=$(basename $SHELL)
+  SHELL_CONFIG=~/".${SHELL_BIN}rc"
+
+  cd ${SCRIPT_DIR}
+
+  line="
+  export QN_DATA_DIR=${SCRIPT_DIR}/data
+  PATH=\$PATH:${SCRIPT_DIR}
+  "
+
+  if grep -q "QN_DATA_DIR" $SHELL_CONFIG ; then
+    echo "Already installed for ${SHELL_BIN}"
+  else
+    echo "Installing for ${SHELL_BIN}"
+    echo "$line" >> $SHELL_CONFIG
+    echo "Append $SHELL_CONFIG:
+    $line"
+  fi
+
+  create_shortcut qnc "#!/bin/bash \nqn -c '\$*'"
+  create_shortcut qnr "#!/bin/bash \nqn -r '\$*'"
+  create_shortcut qnu "#!/bin/bash \nqn -u '\$*'"
+  create_shortcut qnd "#!/bin/bash \nqn -d '\$*'"
+  
+  exit 0;
+fi
+
+if [ "$1" = "--help" ]|| [ "$1" = "-h" ]; then
+  echo -e "
+  <title> - note name
+  <title_hint> - any part of title or sequence of title parts.
+
+  update                        update qnotes
+  install                       add qn to PATH, create shortcuts: qnc, qnr, qnd, qnu.
+
+  -c, --create  <title>         CREATE note with title.     qnc for short.
+  -r, --read    <title_hint>    READ   note by title hint.  qnr for short.
+  -d, --delete  <title_hint>    DELETE note by title hint.  qnd for short.
+  -u, --update  <title_hint>    UPDATE note by title hint.  qnu for short.
+
+  -a, --all                     list of notes.
+  -t, --tree                    tree structure of notes.
+
+  -h, --help                    qnotes manual
+
+"
+  exit 0;
+fi
+
+echo "error: invalid option"
