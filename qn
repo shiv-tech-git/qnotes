@@ -37,7 +37,7 @@ function regexp_hint {
 
 function all_notes {
   local escaped=$(echo $QN_DATA_DIR | sed 's/\//\\\//g')
-  find $QN_DATA_DIR -type f | sed "s/^$escaped//"
+  find $QN_DATA_DIR -type f | sed "s/^$escaped\///"
 }
 
 function find_notes {
@@ -112,7 +112,8 @@ if [ "$1" = "--read" ] || [ "$1" = "-r" ]; then
   while read -r file; do
     echo "$file"
     file_no_color=$(remove_color ${file})
-    cat "${QN_DATA_DIR}/$file_no_color" | sed 's/\(.*\)/\t\1/'
+    cat "${QN_DATA_DIR}/$file_no_color" | sed 's/\(.*\)/\t\1/'  | head -n 3
+    echo ""
   done <<< "$files"
 
   exit 0
@@ -162,14 +163,13 @@ if [ "$1" = "--tree" ] || [ "$1" = "-t" ]; then
   exit 0
 fi
 
-if [ "$1" = "--all" ] || [ "$1" = "-a" ]; then
-  check_data_dir 
+if [ "$1" = "--all" ] || [ "$1" = "-a" ]; then 
   data_dir_exists
   if [ "$?" -eq 0 ] ; then
     all_notes
   fi
+
   exit 0;
-  // TODO: echo empty if empty
 fi
 
 if [ "$1" = "update" ]; then
@@ -210,10 +210,10 @@ if [ "$1" = "install" ]; then
     $line"
   fi
 
-  create_shortcut qnc "#!/bin/bash \nqn -c '\$*'"
-  create_shortcut qnr "#!/bin/bash \nqn -r '\$*'"
-  create_shortcut qnu "#!/bin/bash \nqn -u '\$*'"
-  create_shortcut qnd "#!/bin/bash \nqn -d '\$*'"
+  create_shortcut qnc "#!/bin/bash \nqn -c \"\$*\""
+  create_shortcut qnr "#!/bin/bash \nqn -r \"\$*\""
+  create_shortcut qnu "#!/bin/bash \nqn -u \"\$*\""
+  create_shortcut qnd "#!/bin/bash \nqn -d \"\$*\""
   
   exit 0;
 fi
