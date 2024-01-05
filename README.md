@@ -4,6 +4,10 @@
 ```
 qn install
 ```
+### Uninstall
+```
+qn uninstall
+```
 ### __Update__  
 ```
 qn update
