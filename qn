@@ -200,34 +200,44 @@ if [ "$1" = "update" ]; then
   exit 0;
 fi
 
-
-if [ "$1" = "install" ]; then
+if [ "$1" = "install" ] || [ "$1" = "uninstall" ]; then
   SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   SHELL_BIN=$(basename $SHELL)
   SHELL_CONFIG=~/".${SHELL_BIN}rc"
 
   cd ${SCRIPT_DIR}
 
-  line="
-  export QN_DATA_DIR=${SCRIPT_DIR}/data
-  export QN_SRC_DIR=${SCRIPT_DIR}
-  PATH=\$PATH:${SCRIPT_DIR}
-  "
+  config="export QN_DATA_DIR=${SCRIPT_DIR}/data
+export QN_SRC_DIR=${SCRIPT_DIR}
+PATH=\$PATH:${SCRIPT_DIR}"
 
-  if grep -q "QN_DATA_DIR" $SHELL_CONFIG ; then
-    echo "Already installed for ${SHELL_BIN}"
-  else
-    echo "Installing for ${SHELL_BIN}"
-    echo "$line" >> $SHELL_CONFIG
-    echo "Append $SHELL_CONFIG:
-    $line"
+  if [ "$1" = "install" ]; then
+    if grep -q "QN_DATA_DIR" $SHELL_CONFIG ; then
+      echo "Already installed for ${SHELL_BIN}"
+    else
+      echo "Installing for ${SHELL_BIN}"
+      echo "$config" >> $SHELL_CONFIG
+      echo -e "Append $SHELL_CONFIG:\\n$config\\n"
+    fi
+
+    create_shortcut qnc "#!/bin/bash \nqn -c \"\$*\""
+    create_shortcut qnr "#!/bin/bash \nqn -r \"\$*\""
+    create_shortcut qnu "#!/bin/bash \nqn -u \"\$*\""
+    create_shortcut qnd "#!/bin/bash \nqn -d \"\$*\""
+    
+  elif [ "$1" = "uninstall" ]; then
+    rm -f $SCRIPT_DIR/qnc
+    rm -f $SCRIPT_DIR/qnr
+    rm -f $SCRIPT_DIR/qnu
+    rm -f $SCRIPT_DIR/qnd
+
+    IFS=$'\n'
+    for line in $config ; do
+      escaped_line=$(echo $line | sed 's/\//\\\//g')
+      sed -i "/$escaped_line/d" $SHELL_CONFIG
+    done
   fi
 
-  create_shortcut qnc "#!/bin/bash \nqn -c \"\$*\""
-  create_shortcut qnr "#!/bin/bash \nqn -r \"\$*\""
-  create_shortcut qnu "#!/bin/bash \nqn -u \"\$*\""
-  create_shortcut qnd "#!/bin/bash \nqn -d \"\$*\""
-  
   exit 0;
 fi
 
