@@ -81,6 +81,17 @@ function find_target {
   __target=$(remove_color "$notes")
 }
 
+function create_shortcut {
+  local file="$SCRIPT_DIR/$1"
+  if [ -f $file ]; then
+    echo "$1 already exists"
+  else
+    echo "creating $1"
+    echo -e $2 > $file
+    chmod u+x $file
+  fi
+}
+
 if [ "$1" = "--create" ] || [ "$1" = "-c" ]; then
   check_data_dir 
   shift
@@ -184,21 +195,11 @@ if [ "$1" = "--all" ] || [ "$1" = "-a" ]; then
 fi
 
 if [ "$1" = "update" ]; then
-  cd ${QN_DATA_SRC}
+  cd ${QN_SRC_DIR}
   git pull
   exit 0;
 fi
 
-function create_shortcut {
-  local file="$SCRIPT_DIR/$1"
-  if [ -f $file ]; then
-    echo "$1 already exists"
-  else
-    echo "creating $1"
-    echo -e $2 > $file
-    chmod u+x $file
-  fi
-}
 
 if [ "$1" = "install" ]; then
   SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -209,6 +210,7 @@ if [ "$1" = "install" ]; then
 
   line="
   export QN_DATA_DIR=${SCRIPT_DIR}/data
+  export QN_SRC_DIR=${SCRIPT_DIR}
   PATH=\$PATH:${SCRIPT_DIR}
   "
 
