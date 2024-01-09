@@ -246,8 +246,9 @@ if [ "$1" = "--help" ]|| [ "$1" = "-h" ]; then
   <title> - note name
   <title_hint> - any part of title or sequence of title parts.
 
-  update                        update qnotes
   install                       add qn to PATH, create shortcuts: qnc, qnr, qnd, qnu.
+  uninstall                     undo install changes
+  update                        update qnotes
 
   -c, --create  <title>         CREATE note with title.     qnc for short.
   -r, --read    <title_hint>    READ   note by title hint.  qnr for short.
