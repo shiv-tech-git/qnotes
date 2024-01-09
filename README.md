@@ -1,8 +1,14 @@
 ## QNotes
 
 ### Install
+Creates shortcuts for CRUD operation.  
+Add source folder to __PATH__
 ```
 qn install
+```
+open new terminal session or   
+```
+. ~/.$(basename ${SHELL})rc
 ```
 ### Uninstall
 ```
