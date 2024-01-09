@@ -33,8 +33,8 @@ And pass it to grep.
 If you have collision like this:
 ```
 start note
-      note
-      note end
+note
+note end
 ```
 You can specify note title like this:  
 ^note   ->  __note__ and __note end__  
@@ -48,12 +48,20 @@ qn --create <note_title>
 qn -c <note_title>
 qnc <note_title>
 ```
+`qnc this is my note title`
+Creates _/this_is_my_note_title_ in __QN_DATA_DIR__
+`qnc little/hierarchy/for/my/notes` Creates _/little/hierarchy/for/my_ folder in  __QN_DATA_DIR__ and notes _file_ in it. 
 
 ### __Read__  
 ```
 qn --read <title_hint>
 qn -r <title_hint>
 qnr <title_hint>
+```
+`qnr my note` gives output
+```
+this_is_my_note_title
+        note body
 ```
 
 ### __Update__
